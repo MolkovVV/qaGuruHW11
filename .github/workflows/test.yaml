@@ -2,24 +2,28 @@ name: try actions HW11
 on: workflow_dispatch
 jobs:
   test:
+    #де запускаем
     runs-on: ubuntu-latest
+    #Что делаем
     steps:
+      #Выкачиваем проект
       - uses: actions/checkout@v3
+      #настраиваем Java
       - uses: actions/setup-java@v3
-      - uses: Xotabu4/selenoid-github-action@v2
         with:
           distribution: 'temurin' # See 'Supported distributions' for available options
           java-version: '11'
+      - uses: Xotabu4/selenoid-github-action@v2
+      #Запускаем тесты
       - run: ./gradlew clean test -Dselenide.remote=http://localhost:4444/wd/hub
-
+      #Скачиваем историю тестов
       - uses: actions/checkout@v2
           if: always()
           continue-on-error: true
           with:
             ref: gh-pages
             path: gh-pages
-
-
+      #Генерируем отчет
       - uses: simple-elf/allure-report-action@master
           if: always()
           with:
@@ -27,10 +31,9 @@ jobs:
             allure_report: allure-report
             allure_history: allure-history
 
-
       - uses: peaceiris/actions-gh-pages@v2
-    if: always()
-    env:
-      PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      PUBLISH_BRANCH: gh-pages
-      PUBLISH_DIR: allure-history
+        if: always()
+        env:
+            PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            PUBLISH_BRANCH: gh-pages
+            PUBLISH_DIR: allure-history
