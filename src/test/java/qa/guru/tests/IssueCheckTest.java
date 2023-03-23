@@ -3,14 +3,9 @@ package qa.guru.tests;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.Feature;
 import io.qameta.allure.selenide.AllureSelenide;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import qa.guru.pages.MainPage;
-import qa.guru.pages.Page;
-import qa.guru.pages.RepoPage;
-import qa.guru.pages.SearchResultsPage;
 import qa.guru.steps.WebSteps;
 
 import java.util.stream.Stream;
@@ -81,16 +76,12 @@ public class IssueCheckTest {
 
     public void checkIssuesNamesWebSteps(String nameRepo, String idIssues, String namesIssues){
         SelenideLogger.addListener("allure", new AllureSelenide());
-        MainPage page = new MainPage("https://github.com/");
-        SearchResultsPage searchPage = new SearchResultsPage();
-        RepoPage repoPage = new RepoPage();
         WebSteps steps = new WebSteps();
 
-        steps.openPage(page);
-        steps.checkElementOnPage(page.headerOnPage,page.actualTextInHeader);
-        steps.sendSearchQuery("Selenide",page);
-        steps.checkElementFromSearchList(searchPage.elementsRepoLinks,nameRepo);
-        steps.clickOnElement(repoPage.issueTab);
-        steps.checkRepoById(idIssues,namesIssues);
+        steps.openMainPage();
+        steps.searchRepos("Selenide");
+        steps.clickOnRepoFromSearch(nameRepo);
+        steps.clickTabIssue();
+        steps.ckeckIssueNameInRepo(idIssues,namesIssues);
     }
 }

@@ -1,48 +1,32 @@
 package qa.guru.steps;
-
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.ElementsCollection;
-import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
-import qa.guru.pages.Page;
 
 import java.nio.charset.StandardCharsets;
 
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Condition.ownText;
+import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Selenide.*;
 
 public class WebSteps {
-    @Step("Открываем страницу по url {page.pageURL}" )
-    public void openPage(Page page){
-        open(page.pageURL);
+    @Step ("Открываем главную страницу Githab")
+    public void openMainPage() {open("https://github.com/");}
+
+    @Step ("Отправляем поисковой запрос с текстом \"{query}\"")
+    public void searchRepos(String query){$("input.form-control").setValue(query).submit();}
+
+    @Step("Из поисковой выдачи переходим в репозиторий с текстом: {nameRepo}")
+    public void clickOnRepoFromSearch(String nameRepo) {
+        $$("a.v-align-middle").findBy(ownText(nameRepo)).click();
     }
 
-    @Step("Отправляем поисковой запрос с текстом {query}")
-    public  void  sendSearchQuery(String query, Page page){
-        page.searchInput.setValue(query).submit();
-    }
+    @Step("Переходим в табу \"Issue\"")
+    public void clickTabIssue(){$("#issues-tab").click();}
 
-    @Step("Проверим наличие текста \"{text}\" на странице")
-    public void checkElementOnPage(SelenideElement element,String text){
-        element.shouldHave(Condition.text(text));
-    }
-
-    @Step("Выбрать элемент из списка, содержащего текст {text}")
-    public void checkElementFromSearchList(ElementsCollection elementLink, String text){
-        elementLink.findBy(Condition.text(text)).click();
-    }
-
-    @Step("Клик по элементу на странице")
-    public void clickOnElement(SelenideElement element){
-        element.click();
-    }
-
-    @Step("Issue c id {id} содержит name: {name}")
-    public void checkRepoById(String id, String name){
-
-        $("#issue_"+id+"_link").shouldHave(Condition.text(name));
+    @Step("В табе \"Issue\" отображается issue c id: {idIssues}  и с name: {namesIssues}")
+    public void  ckeckIssueNameInRepo(String idIssue, String nameIssue){
+        $("#issue_" + idIssue + "_link").shouldHave(text(nameIssue));
         Allure.getLifecycle().addAttachment(
                 "Исходники страницы",
                 "text/html",
