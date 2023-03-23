@@ -34,7 +34,7 @@ public class WebSteps {
         elementLink.findBy(Condition.text(text)).click();
     }
 
-    @Step("Клик по элементу {element}")
+    @Step("Клик по элементу на странице")
     public void clickOnElement(SelenideElement element){
         element.click();
     }
